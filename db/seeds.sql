@@ -1,3 +1,8 @@
+DELETE FROM employee;
+DELETE FROM role;
+DELETE FROM department;
+
+
 INSERT INTO Department (name)
 VALUES
     ('Engineering'),

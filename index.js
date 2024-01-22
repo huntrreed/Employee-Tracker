@@ -1,8 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 
-
-// Connect to database
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -125,7 +123,6 @@ function addEmployee(){
           db.query(query, params, function (insertErr, insertResults) {
             if (insertErr) throw insertErr;
             console.log(`Added ${answers.firstName} ${answers.lastName} to the database.`);
-            // Return to main menu
             displayMainMenu(); 
           });
         });
@@ -179,29 +176,111 @@ function updateEmployeeRole() {
 
 /*Function View All Roles*/
 function viewAllRoles() {
-  db.query('SELECT DISTINCT title, salary, department_id FROM role', function (err, results) {
+  const query = `
+    SELECT 
+      r.title AS Title,
+      d.name AS Department,
+      r.salary AS Salary
+    FROM role r
+    INNER JOIN department d ON r.department_id = d.id
+    ORDER BY r.id
+  `;
+
+  db.query(query, function (err, results) {
     if (err) {
-      console.error('Error fetching roles:', err);
+      console.error('Error fetching roles with department names:', err);
       return displayMainMenu();
     }
-    console.table(results);
+
+    const formattedResults = results.map(role => ({
+      ...role,
+      Salary: new Intl.NumberFormat().format(role.Salary)
+    }));
+
+    console.table(formattedResults);
     displayMainMenu();
   });
 }
 
 /*Function to Add New Role*/
-function addRole(){console.log('This will be done after checks.');
-displayMainMenu(); 
+function addRole() {
+  db.query('SELECT id, name FROM department', function (deptErr, departments) {
+    if (deptErr) {
+      console.error('Error fetching departments:', deptErr);
+      return displayMainMenu();
+    }
+
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'title',
+        message: "What is the name of the new role?"
+      },
+      {
+        type: 'input',
+        name: 'salary',
+        message: "What is the salary for this role?"
+      },
+      {
+        type: 'list',
+        name: 'departmentId',
+        message: "Which department does this role belong to?",
+        choices: departments.map(dept => ({ name: dept.name, value: dept.id }))
+      }
+    ]).then(answers => {
+      // Insert new role into the database
+      const query = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+      const params = [answers.title, answers.salary, answers.departmentId];
+
+      db.query(query, params, function (insertErr, insertResults) {
+        if (insertErr) {
+          console.error('Error adding new role:', insertErr);
+          return displayMainMenu();
+        }
+        console.log(`Added new role: ${answers.title} to the database.`);
+        displayMainMenu();
+      });
+    });
+  });
 }
+
 
 /*Function to view all departments*/
-function viewAllDepartments(){console.log('This will be done after checks.');
-displayMainMenu(); 
+function viewAllDepartments() {
+  db.query('SELECT id, name FROM department', function (err, results) {
+    if (err) {
+      console.error('Error fetching departments:', err);
+      return displayMainMenu();
+    }
+    const departments = results.map(({ id, name }) => ({ ID: id, Department: name }));
+    console.table(departments);
+    displayMainMenu();
+  });
 }
 
-function addDepartment(){console.log('This will be done after checks.');
-displayMainMenu(); 
+
+/*Function to ad department*/
+function addDepartment() {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'name',
+      message: "What is the name of the new department?"
+    }
+  ]).then(answers => {
+    // Insert the department into database
+    const query = `INSERT INTO department (name) VALUES (?)`;
+    db.query(query, answers.name, function (insertErr, insertResults) {
+      if (insertErr) {
+        console.error('Error adding new department:', insertErr);
+        return displayMainMenu();
+      }
+      console.log(`Added new department: ${answers.name} to the database.`);
+      displayMainMenu();
+    });
+  });
 }
+
 
 function Exit(){console.log('This will be done after checks.');
 displayMainMenu(); 
