@@ -1,5 +1,4 @@
 const inquirer = require('inquirer');
-const express = require('express');
 const mysql = require('mysql2');
 
 
@@ -71,18 +70,40 @@ console.error('Error with Inquirer prompt:', error);
 }
 
 //*FUNCTIONS FOR EACH MENU OPTION*//
-function viewAllEmployees(){}
+function viewAllEmployees(){
+  db.query('SELECT * FROM employee', function (err, results) {
+    if (err) throw err;
+    console.table(results);
+    displayMainMenu();
+  });
+}
 
-function AddEmployee(){}
 
-function updateEmployeeRole(){}
+function AddEmployee(){
+  console.log('This will be done after checks.');
+  displayMainMenu(); 
+}
 
-function viewAllRoles(){}
+function updateEmployeeRole(){console.log('This will be done after checks.');
+displayMainMenu(); 
+}
 
-function addRole(){}
+function viewAllRoles(){console.log('This will be done after checks.');
+displayMainMenu(); 
+}
 
-function viewAllDepartments(){}
+function addRole(){console.log('This will be done after checks.');
+displayMainMenu(); 
+}
 
-function addDepartment(){}
+function viewAllDepartments(){console.log('This will be done after checks.');
+displayMainMenu(); 
+}
 
-function Exit(){}
+function addDepartment(){console.log('This will be done after checks.');
+displayMainMenu(); 
+}
+
+function Exit(){console.log('This will be done after checks.');
+displayMainMenu(); 
+}
