@@ -305,6 +305,3 @@ function addDepartment() {
 }
 
 
-function Exit(){console.log('This will be done after checks.');
-displayMainMenu(); 
-}
