@@ -260,7 +260,7 @@ function addRole() {
           console.error('Error adding new role:', insertErr);
           return displayMainMenu();
         }
-        console.log(`Added new role: ${answers.title} to the database.`);
+        console.log(`Added new role: ${answers.title}.`);
         displayMainMenu();
       });
     });
@@ -282,7 +282,7 @@ function viewAllDepartments() {
 }
 
 
-/*Function to ad department*/
+/*Function to add new department*/
 function addDepartment() {
   inquirer.prompt([
     {
@@ -298,7 +298,7 @@ function addDepartment() {
         console.error('Error adding new department:', insertErr);
         return displayMainMenu();
       }
-      console.log(`Added new department: ${answers.name} to the database.`);
+      console.log(`Added new department: ${answers.name}.`);
       displayMainMenu();
     });
   });
